@@ -1,22 +1,26 @@
 /**
- * Created by lenovo on 2017/7/26.
+ * Created by YoungZhang on 2017/7/26.
  */
 
 (function () {
-    //传入方式默认为对象
-    function Ajax(obj){
+    //定义构造函数
+    function Ajax(obj){     //传入方式默认为对象
+        //整理参数
         this.url = obj.url;
         this.data = obj.data || '';
-        this.method = 'GET' || 'POST';    //请求方式可以为GET也可以为POST
+        this.method = obj.method || 'GET';    //请求方式可以为GET也可以为POST,但是默认为GET
         this.dataType = obj.dataType || (obj.dataType).toUpperCase();   //返回值类型可为XML/json/jsonp三种
         this.async = obj.async || true;   //默认为异步请求
         this.success = obj.success;
         this.error = obj.error;
+        this.timeout = obj.timeout || 0;
         this.xml = null;
         this.init();
     }
 
+    //重写原型就会断掉构造函数与原型之间的链，所以构造函数中的属性和方法在新的原型中将不可使用
     Ajax.prototype = {
+        //下面这句就相当于手动将构造函数与构造函数的原型对象连接起来，因为constructor是原型中的固有属性
         constructor : Ajax,
         init : function () {
             this.createXml();
@@ -44,9 +48,10 @@
                 for(var param in this.data){
                     arr.push(encodeURIComponent(param) + '=' + encodeURIComponent(this.data[param]));
                 }
-                arr.join('&');
+                arr = arr.join('&');    //将拼接成功的字符串数组继续赋给arr数组
             }
             this.data = arr;
+            // console.log(arr);
         },
         //请求方式为GET/POST时,接收服务器不同的响应
         //XMLHttpRequest 对象有三个重要的属性：
@@ -65,7 +70,7 @@
         // 在onreadystatechange 事件中,我们规定当服务器响应已做好被处理的准备时所执行的任务。
         // 当readyState 等于 4 且 status 为 2字头或 304 时,表示响应已就绪：
 
-        //当dataType为json时
+        //当服务端的返回值类型为json时
         dataTypeJson : function () {
             // this.url = this.url;
             var callback = function () {
@@ -104,26 +109,40 @@
             }
         },
 
-        //当dataType为jsonp时
+        //当服务端的返回值类型为jsonp时
         dataTypeJsonp : function () {
-            //querySelector()方法接收一个CSS选择符,返回与该模式匹配的第一个元素
-            var that = this;
-            var head = document.querySelector('head');
-            var script = document.createElement('script');     //创建script标签
+            var that = this;   //在这更改this赋值给that是因为为this的指向是根据执行上下文来决定的，如果这里继续用this，但是你在调用success的部分的this不一定会指向外层的构造函数，所以用that来保存上层作用域
+            var head = document.querySelector('head');     //querySelector()方法接收一个CSS选择符,返回与该模式匹配的第一个元素
+            var script = document.createElement('script');          //创建script标签
             var callbackName = 'callback' + new Date().getTime();   //生成唯一回调函数名
-            callbackName.replace('.');    //回调函数名不能有.
+            callbackName.replace('.','');      //回调函数名不能有.
             script.src = this.url + '?' + this.data + '&callback=' + callbackName;
             head.appendChild(script);   //插入script标签作为head的最后一个子元素
 
-            //回调
+            //定义回调函数
             window[callbackName] = function (data) {
+                clearTimeout(timer);          //清除超时
                 that.success(data);
+                // console.log(this);           //undefined,指向window
+                // console.log(that);           //Ajax
                 head.removeChild(script);     //清除用过的script标签
                 window[callbackName]=null;    //释放window头上用过的属性
             };
-        }
 
+            //设定超时
+            if(this.timeout){
+                var timer = setTimeout(function () {
+                    head.removeChild(script);
+                    window[callbackName] = function () {};
+                    this.error && this.error();   //判断是否有error这个函数，如果有的话执行这个函数
+                },this.timeout);
+            }
+        },
     };
-    window.Ajax = Ajax;
+
+    window.Ajax = function (data) {
+        return new Ajax(data);
+    };
+
 })();
 
