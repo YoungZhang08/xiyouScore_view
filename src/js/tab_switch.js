@@ -13,9 +13,11 @@
     content[0].style.display = "block";
     content[1].style.display = "none";
     content[2].style.display = "none";
+
     opt[0].querySelector('img').setAttribute('src',"../image/icon/scr_btn_pass_pre.png");
     opt[1].querySelector('img').setAttribute('src',"../image/icon/scr_btn_upass_upre.png");
     opt[2].querySelector('img').setAttribute('src',"../image/icon/scr_btn_inqu_upre.png");
+
 
     opt[0].addEventListener("click",function () {
         content[0].style.display = "block";
@@ -43,4 +45,5 @@
         opt[1].querySelector('img').setAttribute('src',"../image/icon/scr_btn_upass_upre.png");
         opt[2].querySelector('img').setAttribute('src',"../image/icon/scr_btn_inqu_pre.png");
     },false);
+
 })();

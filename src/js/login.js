@@ -57,11 +57,12 @@
                 },
                 success : function (data) {
                     if(data.error == false){
-                        alert("登录成功!")
+                        alert("登录成功!");
                         window.localStorage.name = data.result;
                         window.localStorage.username = getParams.username;
                         window.localStorage.password = getParams.password;
                         window.location.href = "../html/main.html";
+                        getParams.verCode = '';
                     }else{
                         alert("登录失败!");
                     }
