@@ -7,6 +7,7 @@
         init : function () {
             infoShow.userPortrait();
             infoShow.infoDetail();
+            infoShow.exitLogin();
         },
 
         //获取用户头像
@@ -51,6 +52,16 @@
             });
         },
 
+        //退出登录
+        exitLogin : function () {
+            document.querySelector('.login_out').addEventListener("click",function () {
+                window.localStorage.name = '';
+                window.localStorage.username = '';
+                window.localStorage.password = '';
+                window.localStorage.session = '';
+                window.location.href = "../index.html";
+            },false);
+        }
     };
     infoShow.init();
 })();
