@@ -19,16 +19,8 @@
 
         //用户信息展示
         infoDetail: function() {
-            var options = {
-                userName: document.querySelector('.user_id'),
-                userBirth: document.querySelector('.user_birth'),
-                userAcademy: document.querySelector('.user_academy'),
-                userClass: document.querySelector('.user_class'),
-                userLevel: document.querySelector('.user_level'),
-                userSex: document.querySelector('.user_sex'),
-                userAge: document.querySelector('.user_age'),
-                name: document.querySelector('.per_name').querySelector('span')
-            };
+
+            var name = document.querySelector('.per_name').querySelector('span');
 
             Ajax({
                 url: 'http://localhost:8000/users/info',
@@ -40,15 +32,15 @@
                     name: window.localStorage.name
                 },
                 success: function(data) {
-                    // console.log(data.result);
-                    options.name.innerHTML = data.result.name;
-                    options.userName.innerHTML = data.result.username;
-                    options.userBirth.innerHTML = data.result.birthday.substr(0, 4) + '年' + data.result.birthday.substr(4, 2) + '月' + data.result.birthday.substr(6, 2) + '日';
-                    options.userAcademy.innerHTML = data.result.academy;
-                    options.userClass.innerHTML = data.result.class;
-                    options.userLevel.innerHTML = data.result.level + '级';
-                    options.userSex.innerHTML = data.result.sex;
+                    var fragment = document.createDocumentFragment();
+                    var div = document.createElement('div');
+                    div.className = "info_det";
+                    div.innerHTML = '<div class="user_id">' + data.result.username + '</div><div class="user_birth">' + data.result.birthday.substr(0, 4) + '年' + data.result.birthday.substr(4, 2) + '月' + data.result.birthday.substr(6, 2) + '日' + '</div><div class="user_academy">' + data.result.academy + '</div><div class="user_class">' + data.result.class + '</div><div class="user_level">' + data.result.level + '级' + '</div><div class="user_sex">' + data.result.sex;
                     window.localStorage.level = data.result.level; //后边处理选择学期时候要用
+
+                    fragment.appendChild(div);
+                    var info_main = document.querySelector('.info_main');
+                    info_main.appendChild(fragment);
                 }
             });
         },
