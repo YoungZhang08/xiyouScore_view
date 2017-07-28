@@ -7,6 +7,7 @@
         init : function(){
             // scoreShow.setSemster();
             scoreShow.notThrough();
+            scoreShow.fixMakeup();
         },
 
         //设置学期的select选项
@@ -89,7 +90,42 @@
                 items[4].innerHTML = "最高成绩";
                 items[5].innerHTML = res[i].highest;
             }
+        },
+
+        //补考查询界面的数据填充
+        fixMakeup : function (length,res) {
+            var items = [];
+            var makeup_show = document.querySelector('.makeup_show');
+            for (var i = 0; i < length; i++) {
+                var score_item = document.createElement('div');
+                var item_1 = document.createElement('div');
+                var item_2 = document.createElement('div');
+                for (var j = 0; j < 4; j++) {
+                    items[j] = document.createElement('div');
+                }
+                makeup_show.appendChild(score_item);
+                score_item.appendChild(item_1);
+                score_item.appendChild(item_2);
+                item_1.appendChild(items[0]);
+                item_1.appendChild(items[1]);
+                item_2.appendChild(items[2]);
+                item_2.appendChild(items[3]);
+                score_item.className = "score_item";
+                item_1.className = "item_1";
+                item_2.className = "item_2";
+                items[0].className = "class_name";
+                items[1].className = "class_time";
+                items[2].className = "class_room";
+                items[3].className = "seat_num";
+                // console.log(score_item);
+
+                items[0].innerHTML = res[i].className;
+                items[1].innerHTML = "时间" + '&nbsp;' + '<span color="black">' + '&nbsp;'  + res[i].style+ '</span>';
+                items[2].innerHTML = "考场" + '&nbsp;' + '<span color="black">' + '&nbsp;' + res[i].room + '</span>';
+                items[3].innerHTML = "座位" + '&nbsp;' + '<span color="black">' + '&nbsp;' + res[i].seat + '</span>';
+            }
         }
+
 
     };
     scoreShow.init();

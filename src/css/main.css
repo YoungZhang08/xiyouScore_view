@@ -28,10 +28,6 @@ body{
     position: relative;
 }
 
-#shadow{
-
-}
-
 .info_content{
     width: 70%;
     height:100%;
@@ -177,10 +173,13 @@ select{
 }
 
 .class_name{
-    width: 80%;
+    width:30%;
     color: #7dcef2;
     font-size: .9rem;
     font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .class_nature{
@@ -204,8 +203,9 @@ select{
     font-size: .85rem;
 }
 
-.class_time{
-    /*width: 20%;*/
+.class_time {
+    width:70%;
+    margin-left: .64rem;
 }
 
 .class_room,.class_time,.seat_num{
@@ -290,6 +290,3 @@ select{
     color: #000;
     opacity: .8;
 }
-
-
-

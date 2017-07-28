@@ -48,6 +48,7 @@
                     options.userClass.innerHTML = data.result.class;
                     options.userLevel.innerHTML = data.result.level + '级';
                     options.userSex.innerHTML = data.result.sex;
+                    window.localStorage.level = data.result.level;    //后边处理选择学期时候要用
                 }
             });
         },
