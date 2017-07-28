@@ -2,131 +2,87 @@
  * Created by lenovo on 2017/7/27.
  */
 
-(function () {
+(function() {
     var scoreShow = {
-        init : function(){
+        init: function() {
             // scoreShow.setSemster();
             scoreShow.notThrough();
             scoreShow.fixMakeup();
         },
 
         //设置学期的select选项
-        // setSemster : function () {
+        // setSemster: function() {
         //     var select = document.querySelector('.content_sel');
-        //     var start = document.querySelector('.user_level').innerHTML;   //入学年份
-        //     var end = new Date().getFullYear();    //当前年份
-        //     var num = (end - start)*2;             //学期总数
-        //     for(var i = 0;i < num+1;i++){
+        //     var start = window.localStorage.level; //入学年份
+        //     var end = new Date().getFullYear(); //当前年份
+        //     var num = (end - start) * 2; //学期总数
+        //     // console.log(num);
+        //     for (var i = 1; i <= num; i++) {
         //         select.appendChild(document.createElement('option'));
-        //         for (var j = start,k=1;j < end ,k <= 2;j ++,k++){
-        //             select.getElementsByTagName('option')[i+1].value = start + '-' + Number(start+1) + '学年' + '第' + k + '学期';
-        //             // select.getElementsByTagName('option')[i+1].color = "#000";
-        //             if(k == 3)
-        //                 break;
+        //         for (var j = start, k = 1; j < end, k <= 2; j++, k++) {
+        //             // select.getElementsByTagName('option')[i + 1].value = " start + '-' + Number(start + 1) + '学年' + '第' + k + '学期' ";
+        //             // select.getElementsByTagName('option')[i + 1].color = "#000";
+        //             // if (k == 3)
+        //             //     break;
         //         }
         //     }
-        // }
+        //     console.log(select);
+        // },
 
         //未通过成绩展示
-        notThrough : function () {
+        notThrough: function() {
             Ajax({
-                url : 'http://localhost:8000/score/notThrough',
-                method : 'GET',
-                dataType : 'jsonp',
-                data : {
-                    username : window.localStorage.username,
-                    session : window.localStorage.session,
-                    name : window.localStorage.name
+                url: 'http://localhost:8000/score/notThrough',
+                method: 'GET',
+                dataType: 'jsonp',
+                data: {
+                    username: window.localStorage.username,
+                    session: window.localStorage.session,
+                    name: window.localStorage.name
                 },
-                success : function (data) {
-                    console.log(data.result);
+                success: function(data) {
                     //填充未通过成绩的函数
-                    scoreShow.fixNotThrough(data.result.length,data.result);
+                    scoreShow.fixNotThrough(data.result.length, data.result);
                 }
             });
         },
 
-        //未通过界面的数据填充
-        fixNotThrough : function (length,res) {
-            var items = [];
-            var notThr_show = document.querySelector('.notThr_show');
-            for(var i = 0;i < length;i++){
-                var score_item = document.createElement('div');
-                var item_1 = document.createElement('div');
-                var item_2 = document.createElement('div');
-                for(var j = 0;j < 6;j++){
-                    items[j] = document.createElement('div');
-                }
-                notThr_show.appendChild(score_item);
-                score_item.appendChild(item_1);
-                score_item.appendChild(item_2);
-                item_1.appendChild(items[0]);
-                item_1.appendChild(items[1]);
-                item_2.appendChild(items[2]);
-                item_2.appendChild(items[3]);
-                item_2.appendChild(items[4]);
-                item_2.appendChild(items[5]);
-                score_item.className = "score_item";
-                item_1.className = "item_1";
-                item_2.className = "item_2";
-                items[0].className = "class_name";
-                items[1].className = "class_nature";
-                items[2].className = "credit";
-                items[3].className = "cre";
-                items[4].className = "heighest";
-                items[5].className = "cre";
-                var naure_img = document.createElement('img');
-                items[1].appendChild(naure_img);
-                console.log(score_item);
+        //已通过界面的数据填充
+        passed: function() {
 
-                items[0].innerHTML = res[i].className;
-                if(res[i].nature == '必修课'){
-                    naure_img.setAttribute('src',"../image/icon/scr_icon_must.png");
-                }else if(res[i].nature == '选修课'){
-                    naure_img.setAttribute('src',"../image/icon/src_icon_slt.png");
+        },
+
+        //未通过界面的数据填充
+        fixNotThrough: function(length, res) {
+            var fragment = document.createDocumentFragment();
+            console.log(fragment);
+            for (var i = 0; i < length; i++) {
+                var div = document.createElement('div');
+                div.className = 'score_item';
+                div.innerHTML = '<div class="item_1"><div class="class_name">' + res[i].className + '</div><div class="class_nature"><img src=""></div></div><div class="item_2"><div class="credit">学分</div><div class="cre">' + res[i].credit + '</div><div class="heighest">最高成绩</div><div class="cre">' + res[i].highest + '</div></div></div>';
+                console.log(div);
+                var naure_img = document.querySelector('.class_nature').querySelector('img');
+                if (res[i].nature == '必修课') {
+                    naure_img.setAttribute('src', "../image/icon/scr_icon_must.png");
+                } else if (res[i].nature == '选修课') {
+                    naure_img.setAttribute('src', "../image/icon/src_icon_slt.png");
                 }
-                items[2].innerHTML = "学分";
-                items[3].innerHTML = res[i].credit;
-                items[4].innerHTML = "最高成绩";
-                items[5].innerHTML = res[i].highest;
             }
+            var notThr_show = document.querySelector('.notThr_show');
+            notThr_show.appendChild(fragment);
         },
 
         //补考查询界面的数据填充
-        fixMakeup : function (length,res) {
-            var items = [];
-            var makeup_show = document.querySelector('.makeup_show');
+        fixMakeup: function(length, res) {
+            var fragment = document.createDocumentFragment();
             for (var i = 0; i < length; i++) {
-                var score_item = document.createElement('div');
-                var item_1 = document.createElement('div');
-                var item_2 = document.createElement('div');
-                for (var j = 0; j < 4; j++) {
-                    items[j] = document.createElement('div');
-                }
-                makeup_show.appendChild(score_item);
-                score_item.appendChild(item_1);
-                score_item.appendChild(item_2);
-                item_1.appendChild(items[0]);
-                item_1.appendChild(items[1]);
-                item_2.appendChild(items[2]);
-                item_2.appendChild(items[3]);
-                score_item.className = "score_item";
-                item_1.className = "item_1";
-                item_2.className = "item_2";
-                items[0].className = "class_name";
-                items[1].className = "class_time";
-                items[2].className = "class_room";
-                items[3].className = "seat_num";
-                // console.log(score_item);
-
-                items[0].innerHTML = res[i].className;
-                items[1].innerHTML = "时间" + '&nbsp;' + '<span color="black">' + '&nbsp;'  + res[i].style+ '</span>';
-                items[2].innerHTML = "考场" + '&nbsp;' + '<span color="black">' + '&nbsp;' + res[i].room + '</span>';
-                items[3].innerHTML = "座位" + '&nbsp;' + '<span color="black">' + '&nbsp;' + res[i].seat + '</span>';
+                var div = document.createElement('div');
+                div.className = 'score_item';
+                div.innerHTML = '<div class="item_1"><div class="class_name">' + res[i].className + '</div><div class="class_time">时间&nbsp;<span color="black">' + res[i].style + '</span></div></div><div class="item_2"><div class="seat_num">座位号&nbsp;<span color="black">' + res[i].seat + '</span></div><div class="class_room">考场&nbsp;<span color="black">' + res[i].room + '</span></div></div>';
             }
+            var makeup_show = document.querySelector('.makeup_show');
+            makeup_show.appendChild(fragment);
         }
-
-
     };
     scoreShow.init();
 })();
