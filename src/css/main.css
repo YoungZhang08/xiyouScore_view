@@ -155,6 +155,7 @@ select{
     flex-wrap: wrap;
     width: 100%;
     border-top: 1.8px solid #bac3c8;
+    margin-top: .5rem;
 }
 
 .item_1{
@@ -172,11 +173,11 @@ select{
     flex-wrap: nowrap;
     align-items: center;
     width: 85%;
-    height: 1.4rem;
+    height: 1.5rem;
 }
 
 .class_name{
-    width: 30%;
+    width: 80%;
     color: #7dcef2;
     font-size: .9rem;
     font-weight: bold;
@@ -201,6 +202,10 @@ select{
     color: #000;
     opacity: .8;
     font-size: .85rem;
+}
+
+.class_time{
+    /*width: 20%;*/
 }
 
 .class_room,.class_time,.seat_num{
