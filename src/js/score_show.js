@@ -5,29 +5,35 @@
 (function() {
     var scoreShow = {
         init: function() {
-            // scoreShow.setSemster();
             scoreShow.notThrough();
-            scoreShow.fixMakeup();
+            scoreShow.makeup();
         },
 
-        //设置学期的select选项
-        // setSemster: function() {
-        //     var select = document.querySelector('.content_sel');
-        //     var start = window.localStorage.level; //入学年份
-        //     var end = new Date().getFullYear(); //当前年份
-        //     var num = (end - start) * 2; //学期总数
-        //     // console.log(num);
-        //     for (var i = 1; i <= num; i++) {
-        //         select.appendChild(document.createElement('option'));
-        //         for (var j = start, k = 1; j < end, k <= 2; j++, k++) {
-        //             // select.getElementsByTagName('option')[i + 1].value = " start + '-' + Number(start + 1) + '学年' + '第' + k + '学期' ";
-        //             // select.getElementsByTagName('option')[i + 1].color = "#000";
-        //             // if (k == 3)
-        //             //     break;
-        //         }
-        //     }
-        //     console.log(select);
-        // },
+        //设置学期的select选项以及绑定选择学期的事件
+        setSemster: function() {
+            var select = document.querySelector('.content_sel');
+            var start = window.localStorage.level; //入学年份
+            var end = new Date().getFullYear(); //当前年份
+            var num = (end - start) * 2; //学期总数=创建select的option选项个数
+            for (var i = 1; i <= num; i++) {
+                var option = document.createElement('option');
+                select.appendChild(option);
+                if (i % 2 == 1) {
+                    option.innerHTML = start + '-' + (Number(start) + Number(1)) + '学年第' + 1 + '学期';
+                } else if (i % 2 == 0) {
+                    option.innerHTML = start + '-' + (Number(start) + Number(1)) + '学年第' + 2 + '学期';
+                    start++;
+                }
+            }
+
+            var options = select.getElementsByTagName('option');
+            select.addEventListener("change", function() {
+                var year = options[select.selectedIndex].innerHTML.substr(0, 9);
+                var semester = options[select.selectedIndex].innerHTML.substr(12, 1);
+                var selectOpt = [year, semester];
+                return selectOpt;
+            }, false);
+        },
 
         //未通过成绩展示
         notThrough: function() {
@@ -47,8 +53,49 @@
             });
         },
 
-        //已通过界面的数据填充
+        //补考查询展示
+        makeup: function() {
+            Ajax({
+                url: 'http://localhost:8000/makeUp/makeUp',
+                method: 'GET',
+                dataType: 'jsonp',
+                data: {
+                    username: window.localStorage.username,
+                    session: window.localStorage.session,
+                    name: window.localStorage.name
+                },
+                success: function(data) {
+                    //填充补考查询的函数
+                    scoreShow.fixMakeup(data.result.length, data.result);
+                }
+            });
+        },
+
+        //已通过界面成绩展示
         passed: function() {
+            scoreShow.setSemster();
+            Ajax({
+                url: 'http://localhost:8000/score/semester',
+                method: 'GET',
+                dataType: 'jsonp',
+                data: {
+                    username: window.localStorage.username,
+                    session: window.localStorage.session,
+                    name: window.localStorage.name,
+                    // year : ,
+                    // semester: 
+                },
+                success: function(data) {
+                    scoreShow.setSemster();
+                    // console.log(data.result);
+                    //填充补考查询的函数
+                    // scoreShow.fixSemester(data.result.length, data.result);
+                }
+            });
+        },
+
+        //已通过界面的数据填充
+        fixSemester: function(length, res) {
 
         },
 
@@ -78,7 +125,7 @@
             for (var i = 0; i < length; i++) {
                 var div = document.createElement('div');
                 div.className = 'score_item';
-                div.innerHTML = '<div class="item_1"><div class="class_name">' + res[i].className + '</div><div class="class_time">时间&nbsp;<span color="black">' + res[i].style + '</span></div></div><div class="item_2"><div class="seat_num">座位号&nbsp;<span color="black">' + res[i].seat + '</span></div><div class="class_room">考场&nbsp;<span color="black">' + res[i].room + '</span></div></div>';
+                div.innerHTML = '<div class="item_1"><div class="class_name">' + res[i].className + '</div><div class="class_room">考场&nbsp;&nbsp;<span color="black">' + res[i].seat + '</span></div></div><div class="item_2"><div class="class_time">时间&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span color="black">' + res[i].room + '</span></div></div>';
                 fragment.appendChild(div);
             }
             var makeup_show = document.querySelector('.makeup_show');
