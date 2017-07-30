@@ -4,12 +4,19 @@
 
 (function() {
     var scoreShow = {
+        selectOpt: {
+            year: '',
+            semester: ''
+        },
+
         init: function() {
+            scoreShow.setSemster();
             scoreShow.notThrough();
             scoreShow.makeup();
         },
 
         //设置学期的select选项以及绑定选择学期的事件
+        //已通过界面成绩展示
         setSemster: function() {
             var select = document.querySelector('.content_sel');
             var start = window.localStorage.level; //入学年份
@@ -30,8 +37,26 @@
             select.addEventListener("change", function() {
                 var year = options[select.selectedIndex].innerHTML.substr(0, 9);
                 var semester = options[select.selectedIndex].innerHTML.substr(12, 1);
-                var selectOpt = [year, semester];
-                return selectOpt;
+                scoreShow.selectOpt.year = year;
+                scoreShow.selectOpt.semester = semester;
+
+                Ajax({
+                    url: 'http://localhost:8000/score/semester',
+                    method: 'POST',
+                    dataType: 'jsonp',
+                    data: {
+                        username: window.localStorage.username,
+                        session: window.localStorage.session,
+                        name: window.localStorage.name,
+                        year: scoreShow.selectOpt.year,
+                        semester: scoreShow.selectOpt.semester
+                    },
+
+                    success: function(data) {
+                        //填充已通过成绩查询的函数
+                        scoreShow.fixSemester(data.result.length, data.result);
+                    }
+                });
             }, false);
         },
 
@@ -47,6 +72,9 @@
                     name: window.localStorage.name
                 },
                 success: function(data) {
+                    if (data.result == null) {
+                        alert("同学你太优秀啦^_^!");
+                    }
                     //填充未通过成绩的函数
                     scoreShow.fixNotThrough(data.result.length, data.result);
                 }
@@ -66,37 +94,33 @@
                 },
                 success: function(data) {
                     //填充补考查询的函数
-                    scoreShow.fixMakeup(data.result.length, data.result);
-                }
-            });
-        },
-
-        //已通过界面成绩展示
-        passed: function() {
-            scoreShow.setSemster();
-            Ajax({
-                url: 'http://localhost:8000/score/semester',
-                method: 'GET',
-                dataType: 'jsonp',
-                data: {
-                    username: window.localStorage.username,
-                    session: window.localStorage.session,
-                    name: window.localStorage.name,
-                    // year : ,
-                    // semester: 
-                },
-                success: function(data) {
-                    scoreShow.setSemster();
-                    // console.log(data.result);
-                    //填充补考查询的函数
-                    // scoreShow.fixSemester(data.result.length, data.result);
+                    if (data.result == null) {
+                        alert('同学你太优秀啦^_^!');
+                    } else {
+                        scoreShow.fixMakeup(data.result.length, data.result);
+                    }
                 }
             });
         },
 
         //已通过界面的数据填充
         fixSemester: function(length, res) {
+            var fragment = document.createDocumentFragment();
+            for (var i = 0; i < length; i++) {
+                var div = document.createElement('div');
+                div.className = 'score_item';
+                div.innerHTML = '<div class="item_1"><div class="class_name">' + res[i].courseTitle + '</div><div class="class_nature"><img src=""></div></div><div class="item_2"><div class="final_score">成绩</div><div class="score_point">绩点</div><div class="credit">学分</div></div><div class="item_2"><div class="score">' + res[i].achievement + '</div><div class="point">' + res[i].gradePoint + '</div><div class="cre">' + res[i].credit + '</div></div>';
 
+                var naure_img = div.querySelector('.class_nature').querySelector('img');
+                if (res[i].courseType == '必修课') {
+                    naure_img.setAttribute('src', "../image/icon/scr_icon_must.png");
+                } else if (res[i].courseType == '选修课') {
+                    naure_img.setAttribute('src', "../image/icon/src_icon_slt.png");
+                }
+                fragment.appendChild(div);
+            }
+            var passed_show = document.querySelector('.passed_show');
+            passed_show.appendChild(fragment);
         },
 
         //未通过界面的数据填充
