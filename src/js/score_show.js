@@ -72,6 +72,7 @@
                     name: window.localStorage.name
                 },
                 success: function(data) {
+                    console.log(data.result);
                     if (data.result == null) {
                         alert("同学你太优秀啦^_^!");
                     }
@@ -93,6 +94,7 @@
                     name: window.localStorage.name
                 },
                 success: function(data) {
+                    console.log(data.result);
                     //填充补考查询的函数
                     if (data.result == null) {
                         alert('同学你太优秀啦^_^!');

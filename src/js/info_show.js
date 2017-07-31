@@ -21,7 +21,7 @@
         infoDetail: function() {
 
             var name = document.querySelector('.per_name').querySelector('span');
-
+            name.innerHTML = window.localStorage.name;
             Ajax({
                 url: 'http://localhost:8000/users/info',
                 method: 'GET',
