@@ -24,6 +24,7 @@
             var num = (end - start) * 2; //学期总数=创建select的option选项个数
             for (var i = 1; i <= num; i++) {
                 var option = document.createElement('option');
+                option.style.width = 10 + 'px';
                 select.appendChild(option);
                 if (i % 2 == 1) {
                     option.innerHTML = start + '-' + (Number(start) + Number(1)) + '学年第' + 1 + '学期';
@@ -39,29 +40,36 @@
                 var semester = options[select.selectedIndex].innerHTML.substr(12, 1);
                 scoreShow.selectOpt.year = year;
                 scoreShow.selectOpt.semester = semester;
-
-                Ajax({
-                    url: 'http://localhost:8000/score/semester',
-                    method: 'POST',
-                    dataType: 'jsonp',
-                    data: {
-                        username: window.localStorage.username,
-                        session: window.localStorage.session,
-                        name: window.localStorage.name,
-                        year: scoreShow.selectOpt.year,
-                        semester: scoreShow.selectOpt.semester
-                    },
-
-                    success: function(data) {
-                        //填充已通过成绩查询的函数
-                        scoreShow.fixSemester(data.result.length, data.result);
-                    }
-                });
+                scoreShow.passed();
             }, false);
+        },
+
+        // 已通过界面成绩展示
+        passed: function() {
+            var passed_show = document.querySelector('.passed_show');
+            Ajax({
+                url: 'http://localhost:8000/score/semester',
+                method: 'POST',
+                dataType: 'jsonp',
+                data: {
+                    username: window.localStorage.username,
+                    session: window.localStorage.session,
+                    name: window.localStorage.name,
+                    year: scoreShow.selectOpt.year,
+                    semester: scoreShow.selectOpt.semester
+                },
+
+                success: function(data) {
+                    //填充已通过成绩查询的函数
+                    passed_show.innerHTML = '';
+                    scoreShow.fixSemester(data.result.length, data.result);
+                }
+            });
         },
 
         //未通过成绩展示
         notThrough: function() {
+            var notThr_show = document.querySelector('.notThr_show');
             Ajax({
                 url: 'http://localhost:8000/score/notThrough',
                 method: 'GET',
@@ -72,11 +80,8 @@
                     name: window.localStorage.name
                 },
                 success: function(data) {
-                    console.log(data.result);
-                    if (data.result == null) {
-                        alert("同学你太优秀啦^_^!");
-                    }
                     //填充未通过成绩的函数
+                    notThr_show.innerHTML = '';
                     scoreShow.fixNotThrough(data.result.length, data.result);
                 }
             });
@@ -84,6 +89,7 @@
 
         //补考查询展示
         makeup: function() {
+            var makeup_show = document.querySelector('.makeup_show');
             Ajax({
                 url: 'http://localhost:8000/makeUp/makeUp',
                 method: 'GET',
@@ -94,13 +100,10 @@
                     name: window.localStorage.name
                 },
                 success: function(data) {
-                    console.log(data.result);
+                    // console.log(data.result);
                     //填充补考查询的函数
-                    if (data.result == null) {
-                        alert('同学你太优秀啦^_^!');
-                    } else {
-                        scoreShow.fixMakeup(data.result.length, data.result);
-                    }
+                    makeup_show.innerHTML = '';
+                    scoreShow.fixMakeup(data.result.length, data.result);
                 }
             });
         },
