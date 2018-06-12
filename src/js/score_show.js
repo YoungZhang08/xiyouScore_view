@@ -48,7 +48,7 @@
         passed: function() {
             var passed_show = document.querySelector('.passed_show');
             Ajax({
-                url: 'http://localhost:8000/score/semester',
+                url: 'http://127.0.0.1:8000/score/semester',
                 method: 'POST',
                 dataType: 'jsonp',
                 data: {
@@ -71,7 +71,7 @@
         notThrough: function() {
             var notThr_show = document.querySelector('.notThr_show');
             Ajax({
-                url: 'http://localhost:8000/score/notThrough',
+                url: 'http://127.0.0.1:8000/score/notThrough',
                 method: 'GET',
                 dataType: 'jsonp',
                 data: {
@@ -80,6 +80,7 @@
                     name: window.localStorage.name
                 },
                 success: function(data) {
+                    console.log(data);
                     //填充未通过成绩的函数
                     notThr_show.innerHTML = '';
                     scoreShow.fixNotThrough(data.result.length, data.result);
@@ -91,7 +92,7 @@
         makeup: function() {
             var makeup_show = document.querySelector('.makeup_show');
             Ajax({
-                url: 'http://localhost:8000/makeUp/makeUp',
+                url: 'http://127.0.0.1:8000/makeUp/makeUp',
                 method: 'GET',
                 dataType: 'jsonp',
                 data: {
@@ -119,7 +120,7 @@
                 var naure_img = div.querySelector('.class_nature').querySelector('img');
                 if (res[i].courseType == '必修课') {
                     naure_img.setAttribute('src', "../image/icon/scr_icon_must.png");
-                } else if (res[i].courseType == '选修课') {
+                } else if (res[i].courseType == '选修课' || res[i].courseType == '选修课(尔雅)') {
                     naure_img.setAttribute('src', "../image/icon/src_icon_slt.png");
                 }
                 fragment.appendChild(div);

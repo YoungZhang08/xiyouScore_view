@@ -23,7 +23,7 @@
             var name = document.querySelector('.per_name').querySelector('span');
             name.innerHTML = window.localStorage.name;
             Ajax({
-                url: 'http://localhost:8000/users/info',
+                url: 'http://127.0.0.1:8000/users/info',
                 method: 'GET',
                 dataType: 'jsonp',
                 data: {
