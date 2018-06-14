@@ -15,9 +15,9 @@
                 url: 'http://127.0.0.1:8000/users/verCode',
                 method: 'GET',
                 dataType: 'jsonp',
-                // error: function(err) {
-                //     alert(err);
-                // },
+                error: function(err) {
+                    console.log(err);
+                },
                 success: function(data) {
                     document.querySelector('.verBtn').querySelector('img').setAttribute('src', data.result.verCode);
                     window.localStorage.session = data.result.session;
@@ -60,14 +60,13 @@
                 success: function(data) {
                     console.log(data);
                     if (data.error == false) {
-                        alert("登录成功!");
                         window.localStorage.name = data.result;
                         window.localStorage.username = getParams.username;
                         window.localStorage.password = getParams.password;
                         window.location.href = "../html/main.html";
                         getParams.verCode = '';
                     } else {
-                        alert("登录失败!");
+                        alert("登录失败!请检查你的密码或验证码是否正确~");
                     }
                 }
             });
